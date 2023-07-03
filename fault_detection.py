@@ -1,35 +1,8 @@
 import networkx as nx
 import itertools
 
-def NOT(value, dicti):
-    if dicti.get(value) == 1:
-        return 0
-    else:
-        return 1
 
-
-def XOR(value1, value2, dicti):
-    if dicti.get(value1) == dicti.get(value2):
-        return 0
-    else:
-        return 1
-
-
-def AND(value1, value2, dicti):
-    if dicti.get(value1) == 1:
-        if dicti.get(value2) == 1:
-            return 1
-
-    return 0
-
-
-def OR(value1, value2, dicti):
-    if dicti.get(value1) == 0:
-        if dicti.get(value2) == 0:
-            return 0
-    return 1
-
-# returns the list of input combinations corresponding to one iteration of the double for loop
+# returns the list of input combinations as per the conditions mentioned in dictionary dict1
 def generate_binary_combinations(dict1):
     numbers_list = []
     for key in ['A', 'B', 'C', 'D']:
@@ -46,6 +19,7 @@ def generate_binary_combinations(dict1):
     return combination
 
 
+# Finding Intersection of the two dictionary in terms of input conditions mentioned in both
 def combine_dictionaries(dict1, dict2):
     result_dict = {}
 
@@ -64,7 +38,7 @@ def combine_dictionaries(dict1, dict2):
     return result_dict
 
 
-def call(required_value, graph, node_name, input_conditions):
+def controllability(required_value, graph, node_name, input_conditions):
 
     final_list = []
     if node_name in graph.nodes():
@@ -102,7 +76,7 @@ def call(required_value, graph, node_name, input_conditions):
                     elif inputs.get('D') == 1-required_value:
                         inputs.update({'D': -1})
             else:
-                final_list = call(1-required_value, graph, child[0], inputs).copy()
+                final_list = controllability(1-required_value, graph, child[0], inputs).copy()
             if marker == 1:
                 combinations = generate_binary_combinations(inputs)
                 final_list += combinations
@@ -149,7 +123,7 @@ def call(required_value, graph, node_name, input_conditions):
                                         elif input_for_child1.get('D') == ~i:
                                             input_for_child1.update({'D': 'X'})
                                 else:
-                                    call(i, graph, child, input_for_child1)
+                                    controllability(i, graph, child, input_for_child1)
                             if index == 2:
                                 if child == "A":
                                     if input_for_child2.get('A') != j:
@@ -176,7 +150,7 @@ def call(required_value, graph, node_name, input_conditions):
                                         elif input_for_child2.get('D') == ~j:
                                             input_for_child2.update({'D': 'X'})
                                 else:
-                                    call(j, graph, child, input_for_child2)
+                                    controllability(j, graph, child, input_for_child2)
                         final_from_here = combine_dictionaries(input_for_child1, input_for_child2)
                         combinations = generate_binary_combinations(final_from_here)
                         combinations = list(combinations)
@@ -184,7 +158,7 @@ def call(required_value, graph, node_name, input_conditions):
     return final_list
 
 
-def generate_bad_value(lines, dic, faulty_net, value_due_to_fault):
+def generate_faulty_value(lines, dic, faulty_net, value_due_to_fault):
     value_due_to_fault = 1 - value_due_to_fault
     for line in lines:
         if line.strip() == "":
@@ -212,7 +186,7 @@ def generate_bad_value(lines, dic, faulty_net, value_due_to_fault):
     return dic["Z"]
 
 
-def generate_good_value(lines, dic):
+def generate_expected_value(lines, dic):
     for line in lines:
         if line.strip() == "":
             continue
@@ -239,13 +213,13 @@ def generate_good_value(lines, dic):
 
 def operate(operator, inputs, dic):
     if operator == 'AND':
-        return AND(inputs[0], inputs[1], dic)
+        return dic[inputs[0]] & dic[inputs[1]]
     elif operator == 'OR':
-        return OR(inputs[0], inputs[1], dic)
+        return dic[inputs[0]] | dic[inputs[1]]
     elif operator == 'XOR':
-        return XOR(inputs[0], inputs[1], dic)
+        return dic[inputs[0]] ^ dic[inputs[1]]
     else:
-        return NOT(inputs, dic)
+        return not(dic.get(inputs))
 
 
 # Read the circuit file and initialize a dictionery with four inputs
@@ -329,18 +303,23 @@ for line in lines:
 input_cases = {'A': 'X', 'B': 'X', 'C': 'X', 'D': 'X'}
 
 # Output is a list of possible input combinations
-output = call(required_value, G, faulty_node, input_cases)
+output = controllability(required_value, G, faulty_node, input_cases)
+
+file_path = "output.txt"
+file = open(file_path, 'w')
+
 for every in output:
     dic.update({'A': every[0]})
     dic.update({'B': every[1]})
     dic.update({'C': every[2]})
     dic.update({'D': every[3]})
-    expected = generate_good_value(lines, dic)
-    actual = generate_bad_value(lines, dic, faulty_node, required_value)
-    # print("expected", expected)
-    # print("actual", actual)
+    expected = generate_expected_value(lines, dic)
+    actual = generate_faulty_value(lines, dic, faulty_node, required_value)
     if expected != actual:
         vector = list(every)
-        test_vectors.append(vector)
-print(len(test_vectors))
-print(len(output))
+        file.write("[A, B, C, D] = ")
+        file.write(str(vector))
+        file.write(" Z = ")
+        file.write( str(actual))
+        file.write("\n")
+file.close()
