@@ -1,16 +1,16 @@
 # Fault-Detection-in-Combinational-Circuits
 This is made for Google Girl Hackathon 2023
 ## How to run the code
-Download the zip file from this repository. Run the code using any Python IDE, I have used PyCharm. The input files must be named circuit.txt and fault.txt. The format of the above files must be:
-Circuit File:
-net_e = A & B
-net_f = C | D
-net_g = ~ net_f
-Z = net_g ^ net_e
-
-Fault File:
-FAULT_AT = net_f
-FAULT_TYPE = SA0
+Download the zip file from this repository. Run the code using any Python IDE, I have used PyCharm. The input files must be named circuit.txt and fault.txt. The format of the above files must be:<br>
+Circuit File:<br>
+net_e = A & B <br>
+net_f = C | D <br>
+net_g = ~ net_f <br>
+Z = net_g ^ net_e <br>
+<br>
+Fault File: <br>
+FAULT_AT = net_f <br>
+FAULT_TYPE = SA0 <br>
 
 ## Problem Statement
 Manufactured chips may have structural faults at certain places/nodes, which must be tested before being delivered to end users. Even a single fault can alter the output in some input scenarios. This may be disastrous to the aim for which the chip was made. That is why testing is indispensable and we are trying to reduce the cost, time, and effort it takes to test a circuit and to increase the efficiency of the end product. 
