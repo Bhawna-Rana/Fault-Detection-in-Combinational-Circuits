@@ -1,0 +1,2 @@
+FAULT_AT = net_f
+FAULT_TYPE = SA0
