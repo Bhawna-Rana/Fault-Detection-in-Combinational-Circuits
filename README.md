@@ -1,7 +1,7 @@
 # Fault-Detection-in-Combinational-Circuits
 This is made for Google Girl Hackathon 2023
 ## How to run the code
-Download the zip file from this repository. Run the code using any Python IDE, I have used PyCharm. The input files must be named circuit.txt and fault.txt. The format of the above files must be:<br>
+Download the zip file from this repository. Run the code using any Python IDE, I have used PyCharm. The input files must be named circuit.txt and fault.txt. The right-hand side must contain any one of the four operators &, |, ^, and ~. The format of the above files must be of the following form:<br>
 Circuit File:<br>
 net_e = A & B <br>
 net_f = C | D <br>
