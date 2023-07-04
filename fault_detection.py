@@ -5,8 +5,14 @@ import itertools
 # returns the list of input combinations as per the conditions mentioned in dictionary dict1
 def generate_binary_combinations(dict1):
     numbers_list = []
+    not_possible = 'false'
     for key in ['A', 'B', 'C', 'D']:
-        numbers_list.append(dict1[key])
+        if not_possible == 'false':
+            if dict1[key] == -1:
+                not_possible = 'true'
+                numbers_list.clear()
+            else:    
+                numbers_list.append(dict1[key])
     binary_values = []
 
     for num in numbers_list:
